@@ -16,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, handleLogout }) => {
           <img src={UrbanDriveLogo} alt="UrbanDrive Logo" className="h-9 w-auto mr-2" />
           <Link to="/" className="text-2xl font-bold">UrbanDrive</Link>
         </div>
-        <div className="space-x-4 md:space-x-6 lg:space-x-8">
+        <div className="flex space-x-4 md:space-x-6 lg:space-x-8">
           {isAuthenticated ? (
             <>
               <Link to="/map" className="hover:text-blue-200 flex items-center">

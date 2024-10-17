@@ -4,8 +4,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { db } from '../firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 
+// Configura el token de acceso de Mapbox desde las variables de entorno
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
+// Interfaz para el conductor
 interface Driver {
   id: string;
   latitude: number;
@@ -18,15 +20,15 @@ const Map: React.FC = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
+    if (map.current) return; // Inicializa el mapa solo una vez
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.006, 40.7128], // Default to New York City
+      center: [-74.006, 40.7128], // Predeterminado a Nueva York
       zoom: 12
     });
 
-    // Listen for driver location updates
+    // Escucha las actualizaciones de ubicación de los conductores
     const unsubscribe = onSnapshot(collection(db, 'driver_locations'), (snapshot) => {
       const updatedDrivers = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -36,21 +38,21 @@ const Map: React.FC = () => {
     });
 
     return () => {
-      if (map.current) map.current.remove();
-      unsubscribe();
+      if (map.current) map.current.remove(); // Limpia el mapa al desmontar el componente
+      unsubscribe(); // Detiene la escucha de actualizaciones de Firestore
     };
   }, []);
 
   useEffect(() => {
     if (!map.current) return;
 
-    // Clear existing markers
+    // Limpia los marcadores existentes
     const markers = document.getElementsByClassName('mapboxgl-marker');
-    while(markers[0]) {
+    while (markers[0]) {
       markers[0].parentNode?.removeChild(markers[0]);
     }
 
-    // Add markers for each driver
+    // Añade marcadores para cada conductor
     drivers.forEach(driver => {
       const el = document.createElement('div');
       el.className = 'marker';

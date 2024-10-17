@@ -16,17 +16,32 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, handleLogout }) => {
           <img src={UrbanDriveLogo} alt="UrbanDrive Logo" className="h-9 w-auto mr-2" />
           <Link to="/" className="text-2xl font-bold">UrbanDrive</Link>
         </div>
-        <div className="space-x-4">
+        <div className="space-x-4 md:space-x-6 lg:space-x-8">
           {isAuthenticated ? (
             <>
-              <Link to="/map" className="hover:text-blue-200"><MapPin className="inline-block mr-1" />Map</Link>
-              <Link to="/messages" className="hover:text-blue-200"><MessageSquare className="inline-block mr-1" />Messages</Link>
-              <button onClick={handleLogout} className="hover:text-blue-200"><LogOut className="inline-block mr-1" />Logout</button>
+              <Link to="/map" className="hover:text-blue-200 flex items-center">
+                <MapPin className="inline-block mr-1" />
+                <span className="hidden md:inline">Map</span>
+              </Link>
+              <Link to="/messages" className="hover:text-blue-200 flex items-center">
+                <MessageSquare className="inline-block mr-1" />
+                <span className="hidden md:inline">Messages</span>
+              </Link>
+              <button onClick={handleLogout} className="hover:text-blue-200 flex items-center">
+                <LogOut className="inline-block mr-1" />
+                <span className="hidden md:inline">Logout</span>
+              </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="hover:text-blue-200"><LogIn className="inline-block mr-1" />Login</Link>
-              <Link to="/register" className="hover:text-blue-200"><UserPlus className="inline-block mr-1" />Register</Link>
+              <Link to="/login" className="hover:text-blue-200 flex items-center">
+                <LogIn className="inline-block mr-1" />
+                <span className="hidden md:inline">Login</span>
+              </Link>
+              <Link to="/register" className="hover:text-blue-200 flex items-center">
+                <UserPlus className="inline-block mr-1" />
+                <span className="hidden md:inline">Register</span>
+              </Link>
             </>
           )}
         </div>

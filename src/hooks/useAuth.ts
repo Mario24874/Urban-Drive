@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 interface AuthValues {
@@ -11,6 +11,8 @@ interface AuthValues {
   confirmPassword: string;
   acceptTerms: boolean;
   userType: 'user' | 'driver';
+  isVisible: boolean; // Nuevo campo para la visibilidad
+  userId: string; // Añade userId a AuthValues
 }
 
 interface AuthError {
@@ -30,6 +32,8 @@ export const useAuth = () => {
     confirmPassword: '',
     acceptTerms: false,
     userType: 'user',
+    isVisible: true, // Valor predeterminado para la visibilidad
+    userId: '', // Valor predeterminado para userId
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
@@ -47,17 +51,21 @@ export const useAuth = () => {
     setError(null);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, authValues.email, authValues.password);
+      const { email, password, displayName, phone, userType, isVisible } = authValues;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      await setDoc(doc(db, 'users', user.uid), {
-        displayName: authValues.displayName,
-        email: authValues.email,
-        phone: authValues.phone,
-        userType: authValues.userType,
+      await setDoc(doc(db, userType === 'user' ? 'users' : 'drivers', user.uid), {
+        displayName,
+        email,
+        phone,
+        userType,
+        isVisible, // Guardar la visibilidad en Firestore
       });
       console.log('Usuario registrado con éxito');
+      return user;
     } catch (error) {
       setError({ general: (error as Error).message });
+      return null;
     } finally {
       setLoading(false);
     }
@@ -69,8 +77,25 @@ export const useAuth = () => {
     setError(null);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, authValues.email, authValues.password);
-      return userCredential.user;
+      const { email, password } = authValues;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Obtener datos adicionales de Firestore
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const driverDoc = await getDoc(doc(db, 'drivers', user.uid));
+
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      const driverData = driverDoc.exists() ? driverDoc.data() : null;
+
+      // Actualizar authValues con userId
+      setAuthValues(prev => ({
+        ...prev,
+        userId: user.uid,
+      }));
+
+      // Devolver un objeto que incluya userType
+      return { user, userData, driverData, userType: authValues.userType };
     } catch (error) {
       setError({ general: (error as Error).message });
       return null;

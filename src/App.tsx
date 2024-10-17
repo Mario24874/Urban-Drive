@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import WelcomePage from './components/WelcomePage';
+import WelcomePage from './pages/WelcomePage';
 import Register from './components/Register';
 import Login from './components/Login';
 import Map from './components/Map';
 import Messages from './components/Messages';
 import DriverDashboard from './components/DriverDashboard';
-import Home from './components/Home'; // Importa el componente Home
+import HomePage from './pages/HomePage'; // Importa el componente HomePage
+import UserDashboard from './components/UserDashboard'; // Importa el componente UserDashboard
 
 interface Message {
   id: string;
@@ -54,7 +55,7 @@ function App() {
           <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <Routes>
               <Route path="/" element={<WelcomePage />} />
-              <Route path="/home" element={<Home />} /> {/* Añade la ruta para el componente Home */}
+              <Route path="/home" element={<HomePage />} /> {/* Añade la ruta para el componente HomePage */}
               <Route path="/register" element={<Register handleRegister={handleRegister} />} />
               <Route path="/login" element={<Login handleLogin={handleLogin} />} />
               <Route path="/map" element={<Map />} />
@@ -68,6 +69,9 @@ function App() {
               } />
               {user && user.userType === 'driver' && (
                 <Route path="/driver-dashboard" element={<DriverDashboard userId={user.id} />} />
+              )}
+              {user && user.userType === 'user' && (
+                <Route path="/user-dashboard" element={<UserDashboard userId={user.id} />} />
               )}
             </Routes>
           </div>

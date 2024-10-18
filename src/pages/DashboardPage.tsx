@@ -1,17 +1,16 @@
 import React from 'react';
-import { useAuth } from '../hooks/useAuth';
 import UserDashboard from '../components/UserDashboard';
 import DriverDashboard from '../components/DriverDashboard';
 
-const DashboardPage: React.FC = () => {
-  const { authValues } = useAuth();
+interface DashboardPageProps {
+  userId: string;
+  userType: 'user' | 'driver';
+}
 
-  // Asegúrate de que authValues tenga userId
-  const userId = authValues.userId || ''; // Puedes establecer un valor predeterminado si es necesario
-
+const DashboardPage: React.FC<DashboardPageProps> = ({ userId, userType }) => {
   return (
     <div>
-      {authValues.userType === 'user' ? (
+      {userType === 'user' ? (
         <UserDashboard userId={userId} />
       ) : (
         <DriverDashboard userId={userId} />

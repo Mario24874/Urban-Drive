@@ -88,14 +88,18 @@ export const useAuth = () => {
       const userData = userDoc.exists() ? userDoc.data() : null;
       const driverData = driverDoc.exists() ? driverDoc.data() : null;
 
-      // Actualizar authValues con userId
+      // Determinar userType
+      const userType = userData ? 'user' : 'driver';
+
+      // Actualizar authValues con userId y userType
       setAuthValues(prev => ({
         ...prev,
         userId: user.uid,
+        userType,
       }));
 
       // Devolver un objeto que incluya userType
-      return { user, userData, driverData, userType: authValues.userType };
+      return { user, userData, driverData, userType };
     } catch (error) {
       setError({ general: (error as Error).message });
       return null;

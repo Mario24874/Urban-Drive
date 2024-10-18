@@ -4,38 +4,43 @@ import { db } from '../firebase';
 import UserProfile from '../components/UserProfile';
 import DriverProfile from '../components/DriverProfile';
 
-const ProfilePage: React.FC = () => {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userType, setUserType] = useState<'user' | 'driver' | null>(null);
+interface ProfilePageProps {
+  userId: string;
+  userType: 'user' | 'driver';
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Obtener el ID del usuario actual (puedes obtenerlo de la autenticación)
-    const currentUserId = 'someUserId'; // Reemplaza con la lógica para obtener el ID del usuario actual
-    setUserId(currentUserId);
-
-    // Obtener el tipo de usuario y la visibilidad desde Firestore
     const fetchUserData = async () => {
-      if (currentUserId) {
-        const userDoc = await getDoc(doc(db, 'users', currentUserId));
-        if (userDoc.exists()) {
-          setUserType('user');
-          setIsVisible(userDoc.data().isVisible);
-        } else {
-          const driverDoc = await getDoc(doc(db, 'drivers', currentUserId));
-          if (driverDoc.exists()) {
-            setUserType('driver');
-            setIsVisible(driverDoc.data().isVisible);
+      try {
+        if (userId) {
+          const userDoc = await getDoc(doc(db, userType === 'user' ? 'users' : 'drivers', userId));
+          if (userDoc.exists()) {
+            setIsVisible(userDoc.data().isVisible);
+          } else {
+            setError('User not found');
           }
         }
+      } catch (error) {
+        setError('Error fetching user data');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [userId, userType]);
 
-  if (!userId || !userType) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (

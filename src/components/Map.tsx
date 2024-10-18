@@ -23,19 +23,13 @@ const Map: React.FC = () => {
     if (map.current) return; // Inicializa el mapa solo una vez
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
-      style: 'mapbox://styles/mariomoreno24874/cm25gdhpd00iz01p38ivs1xmu', // URL del estilo personalizado
+      style: 'mapbox://styles/mariomoreno24874/cm25gdhpd00iz01p38ivs1xmu', // URL del estilo público
       center: [-74.006, 40.7128], // Predeterminado a Nueva York
       zoom: 12
     });
 
     // Añade controles al mapa
-    map.current.addControl(new mapboxgl.NavigationControl()); // Controles de zoom y orientación
-    map.current.addControl(new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true
-      },
-      trackUserLocation: true
-    })); // Control de geolocalización
+    map.current.addControl(new mapboxgl.NavigationControl());
 
     // Escucha las actualizaciones de ubicación de los conductores
     const unsubscribe = onSnapshot(collection(db, 'driver_locations'), (snapshot) => {

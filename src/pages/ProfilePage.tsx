@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase'; 
 import UserProfile from '../components/UserProfile';
 import DriverProfile from '../components/DriverProfile';
@@ -17,13 +17,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (userId) {
-          const userDoc = await getDoc(doc(db, userType === 'user' ? 'users' : 'drivers', userId));
-          if (userDoc.exists()) {
-            setIsVisible(userDoc.data().isVisible);
-          } else {
-            setError('User not found');
-          }
+        const userDoc = await getDoc(doc(db, userType === 'user' ? 'users' : 'drivers', userId));
+        if (userDoc.exists()) {
+          setIsVisible(userDoc.data().isVisible);
+        } else {
+          setError('User not found');
         }
       } catch (error) {
         setError('Error fetching user data');
@@ -34,6 +32,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
 
     fetchUserData();
   }, [userId, userType]);
+
+  const handleVisibilityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVisibility = e.target.checked;
+    setIsVisible(newVisibility);
+
+    try {
+      if (userType === 'user') {
+        await updateDoc(doc(db, 'users', userId), { isVisible: newVisibility });
+      } else if (userType === 'driver') {
+        await updateDoc(doc(db, 'drivers', userId), { isVisible: newVisibility });
+      }
+    } catch (error) {
+      setError('Error updating visibility');
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -46,6 +59,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
   return (
     <div>
       <h1>Profile Page</h1>
+      <label>
+        Visible:
+        <input
+          type="checkbox"
+          checked={isVisible}
+          onChange={handleVisibilityChange}
+        />
+      </label>
       {userType === 'user' ? (
         <UserProfile userId={userId} userType={userType} isVisible={isVisible} />
       ) : (

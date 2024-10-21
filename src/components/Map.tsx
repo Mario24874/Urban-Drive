@@ -27,11 +27,22 @@ const Map: React.FC = () => {
       container: mapContainer.current,
       style: 'mapbox://styles/mariomoreno24874/cm2e3oshc002n01pbdfmv1qtj', // Nuevo Style URL
       center: [-69.3348, 10.0636], // Cambiado a Barquisimeto, Venezuela
-      zoom: 12
+      zoom: 12,
+      pitch: 60, // Añade un ángulo de inclinación para ver objetos 3D
+      bearing: 0, // Añade un ángulo de rotación
     });
 
     // Añade controles al mapa
     map.current.addControl(new mapboxgl.NavigationControl());
+
+    // Añade un control para mostrar la ubicación actual del usuario
+    map.current.addControl(new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserHeading: true
+    }));
 
     // Escucha las actualizaciones de ubicación de los conductores
     const unsubscribe = onSnapshot(collection(db, 'driver_locations'), (snapshot) => {
@@ -41,6 +52,25 @@ const Map: React.FC = () => {
       })) as Driver[];
       setDrivers(updatedDrivers);
     });
+
+    // Obtén la ubicación actual del usuario
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          if (map.current) {
+            map.current.flyTo({
+              center: [longitude, latitude],
+              zoom: 15,
+              essential: true
+            });
+          }
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+        }
+      );
+    }
 
     return () => {
       if (map.current) map.current.remove(); // Limpia el mapa al desmontar el componente

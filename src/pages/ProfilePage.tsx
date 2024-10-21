@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase'; 
-import UserProfile from '../components/UserProfile';
 import DriverProfile from '../components/DriverProfile';
+
+const UserProfile = React.lazy(() => import('../components/UserProfile'));
 
 interface ProfilePageProps {
   userId: string;
@@ -19,11 +20,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
       try {
         const userDoc = await getDoc(doc(db, userType === 'user' ? 'users' : 'drivers', userId));
         if (userDoc.exists()) {
-          setIsVisible(userDoc.data().isVisible);
+          const userData = userDoc.data();
+          if (userData && typeof userData.isVisible === 'boolean') {
+            setIsVisible(userData.isVisible);
+          } else {
+            setError('Invalid user data structure');
+          }
         } else {
           setError('User not found');
         }
       } catch (error) {
+        console.error('Error fetching user data:', error);
         setError('Error fetching user data');
       } finally {
         setLoading(false);
@@ -44,6 +51,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
         await updateDoc(doc(db, 'drivers', userId), { isVisible: newVisibility });
       }
     } catch (error) {
+      console.error('Error updating visibility:', error);
       setError('Error updating visibility');
     }
   };
@@ -68,7 +76,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
         />
       </label>
       {userType === 'user' ? (
-        <UserProfile userId={userId} userType={userType} isVisible={isVisible} />
+        <Suspense fallback={<div>Loading User Profile...</div>}>
+          <UserProfile userId={userId} userType={userType} isVisible={isVisible} />
+        </Suspense>
       ) : (
         <DriverProfile driverId={userId} isVisible={isVisible} />
       )}

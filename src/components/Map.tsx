@@ -20,11 +20,13 @@ const Map: React.FC = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   useEffect(() => {
+    if (!mapContainer.current) return;
+
     if (map.current) return; // Inicializa el mapa solo una vez
     map.current = new mapboxgl.Map({
-      container: mapContainer.current!,
-      style: 'mapbox://styles/mariomoreno24874/cm25gdhpd00iz01p38ivs1xmu', // URL del estilo público
-      center: [-74.006, 40.7128], // Predeterminado a Nueva York
+      container: mapContainer.current,
+      style: 'mapbox://styles/mariomoreno24874/cm2e3oshc002n01pbdfmv1qtj', // Nuevo Style URL
+      center: [-69.3348, 10.0636], // Cambiado a Barquisimeto, Venezuela
       zoom: 12
     });
 

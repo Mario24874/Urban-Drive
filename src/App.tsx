@@ -42,8 +42,8 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  const handleSendMessage = async (message: string) => {
-    console.log('Sending message:', message);
+  const handleSendMessage = async (message: string, contactId: string) => {
+    console.log('Sending message:', message, 'to contact:', contactId);
     setMessages([...messages, { id: Date.now().toString(), message }]);
   };
 

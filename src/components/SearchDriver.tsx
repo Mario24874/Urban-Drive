@@ -17,7 +17,7 @@ const SearchDriver: React.FC<SearchDriverProps> = ({ onDriverFound }) => {
 
     try {
       const driversRef = collection(db, 'drivers');
-      const q = query(driversRef, where('phoneNumber', '==', phoneNumber));
+      const q = query(driversRef, where('phone', '==', phoneNumber)); // Asegúrate de que el campo sea 'phone'
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
@@ -27,6 +27,7 @@ const SearchDriver: React.FC<SearchDriverProps> = ({ onDriverFound }) => {
         setError('Driver not found');
       }
     } catch (error) {
+      console.error('Error searching driver:', error);
       setError((error as Error).message);
     } finally {
       setLoading(false);

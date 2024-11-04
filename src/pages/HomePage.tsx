@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, MessageSquare } from 'lucide-react';
+import SearchDriver from '../components/SearchDriver';
 
 const HomePage: React.FC = () => {
+  const [driver, setDriver] = useState<any | null>(null);
+
+  const handleDriverFound = (driver: any) => {
+    setDriver(driver);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 bg-slate-900 bg-opacity-70 p-8 rounded-2xl">
@@ -23,6 +30,17 @@ const HomePage: React.FC = () => {
             <h2 className="text-2xl font-semibold text-gray-300 mb-2">Integrated messaging</h2>
             <p className="text-gray-300">Communicate directly with drivers</p>
           </div>
+        </div>
+        <div className="mt-8">
+          <SearchDriver onDriverFound={handleDriverFound} />
+          {driver && (
+            <div className="mt-4 p-4 bg-slate-900 bg-opacity-50 rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">Driver Found:</h3>
+              <p className="text-gray-300">Name: {driver.displayName}</p>
+              <p className="text-gray-300">Phone: {driver.phoneNumber}</p>
+              {/* Add more driver details here */}
+            </div>
+          )}
         </div>
       </div>
     </div>

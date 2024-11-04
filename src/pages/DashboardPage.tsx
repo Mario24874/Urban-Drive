@@ -9,7 +9,7 @@ interface DashboardPageProps {
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ userId, userType }) => {
   return (
-    <div>
+    <div className="p-4">
       {userType === 'user' ? (
         <UserDashboard userId={userId} />
       ) : (

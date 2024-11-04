@@ -106,13 +106,13 @@ const Map: React.FC = () => {
   }, [drivers]);
 
   return (
-    <div>
+    <div className="relative">
       <div ref={mapContainer} className="w-full h-[400px]" />
-      <div className="mt-4">
-        <h3 className="text-xl font-bold mb-2">Available Drivers:</h3>
-        <ul>
+      <div className="mt-4 p-4 bg-slate-900 bg-opacity-50 rounded-lg shadow-lg">
+        <h3 className="text-xl font-bold text-gray-300 mb-2">Available Drivers:</h3>
+        <ul className="space-y-2">
           {drivers.map(driver => (
-            <li key={driver.id} className="mb-2">
+            <li key={driver.id} className="text-gray-300">
               Driver ID: {driver.id} - Location: {driver.latitude.toFixed(4)}, {driver.longitude.toFixed(4)}
             </li>
           ))}

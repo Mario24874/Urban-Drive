@@ -44,12 +44,12 @@ const Messages: React.FC<MessagesProps> = ({ messages, newMessage, setNewMessage
       </ul>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div>
-        <input
-          type="text"
-          className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white"
-          placeholder="New Message"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          <input
+            type="text"
+            className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white"
+            placeholder="New Message"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
           />
         </div>
         <button

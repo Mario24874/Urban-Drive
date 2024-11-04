@@ -65,14 +65,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, userType }) => {
   }
 
   return (
-    <div>
-      <h1>Profile Page</h1>
-      <label>
-        Visible:
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Profile Page</h1>
+      <label className="flex items-center space-x-2">
+        <span className="text-gray-300">Visible</span>
         <input
           type="checkbox"
           checked={isVisible}
           onChange={handleVisibilityChange}
+          className="form-checkbox h-5 w-5 text-blue-600"
         />
       </label>
       {userType === 'user' ? (

@@ -9,7 +9,7 @@ interface UserDashboardProps {
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ userId }) => {
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">User Dashboard</h2>
       <Suspense fallback={<div>Loading User Profile...</div>}>
         <UserProfile userId={userId} userType="user" isVisible={true} />

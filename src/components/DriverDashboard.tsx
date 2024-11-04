@@ -9,7 +9,7 @@ interface DriverDashboardProps {
 
 const DriverDashboard: React.FC<DriverDashboardProps> = ({ userId }) => {
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Driver Dashboard</h2>
       <Suspense fallback={<div>Loading Driver Location...</div>}>
         <DriverLocation userId={userId} />

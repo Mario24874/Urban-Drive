@@ -15,13 +15,14 @@ const VisibilityToggle: React.FC<VisibilityToggleProps> = ({ isVisible, onChange
   };
 
   return (
-    <div>
-      <label>
-        Visible
+    <div className="p-4 bg-slate-900 bg-opacity-50 rounded-lg shadow-lg">
+      <label className="flex items-center space-x-2">
+        <span className="text-gray-300">Visible</span>
         <input
           type="checkbox"
           checked={visibility}
           onChange={handleVisibilityChange}
+          className="form-checkbox h-5 w-5 text-blue-600"
         />
       </label>
     </div>

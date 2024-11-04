@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export const useFirestore = (collection: string, documentId: string) => {
@@ -25,6 +25,19 @@ export const useFirestore = (collection: string, documentId: string) => {
     };
 
     fetchDocument();
+
+    // Escuchar cambios en tiempo real
+    const unsubscribe = onSnapshot(doc(db, collection, documentId), (docSnap) => {
+      if (docSnap.exists()) {
+        setDocument(docSnap.data());
+      } else {
+        setError('Document not found');
+      }
+    }, (error) => {
+      setError((error as Error).message);
+    });
+
+    return () => unsubscribe();
   }, [collection, documentId]);
 
   const updateDocument = async (updates: any) => {

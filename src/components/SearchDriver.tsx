@@ -14,16 +14,21 @@ const SearchDriver: React.FC<SearchDriverProps> = ({ onDriverFound }) => {
   const handleSearch = async () => {
     setLoading(true);
     setError(null);
-
+  
     try {
       const driversRef = collection(db, 'drivers');
-      const q = query(driversRef, where('phone', '==', phoneNumber)); // Asegúrate de que el campo sea 'phone'
+      const q = query(driversRef, where('phone', '==', phoneNumber));
+      console.log('Searching for phone number:', phoneNumber); // Log del número buscado
       const querySnapshot = await getDocs(q);
-
+  
+      console.log('Query snapshot size:', querySnapshot.size); // Log del tamaño del resultado
+  
       if (!querySnapshot.empty) {
         const driver = querySnapshot.docs[0].data();
+        console.log('Driver found:', driver); // Log del conductor encontrado
         onDriverFound(driver);
       } else {
+        console.log('No matching documents.'); // Log si no se encuentran documentos
         setError('Driver not found');
       }
     } catch (error) {
@@ -33,7 +38,7 @@ const SearchDriver: React.FC<SearchDriverProps> = ({ onDriverFound }) => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="p-4 bg-slate-900 bg-opacity-50 rounded-lg shadow-lg">
       <h2 className="text-xl font-semibold text-gray-300 mb-4">Search Driver</h2>

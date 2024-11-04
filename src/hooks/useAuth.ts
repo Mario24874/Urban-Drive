@@ -49,18 +49,27 @@ export const useAuth = () => {
   const handleRegister = async () => {
     setLoading(true);
     setError(null);
-
+  
     try {
       const { email, password, displayName, phone, userType, isVisible } = authValues;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      await setDoc(doc(db, userType === 'user' ? 'users' : 'drivers', user.uid), {
+  
+      // Crear documento en Firestore para el usuario o conductor
+      const userData = {
         displayName,
         email,
         phone,
         userType,
         isVisible, // Guardar la visibilidad en Firestore
-      });
+      };
+  
+      if (userType === 'user') {
+        await setDoc(doc(db, 'users', user.uid), userData);
+      } else if (userType === 'driver') {
+        await setDoc(doc(db, 'drivers', user.uid), userData);
+      }
+  
       console.log('Usuario registrado con éxito');
       return user;
     } catch (error) {
